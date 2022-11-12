@@ -15,8 +15,8 @@ def get_pict_array(url):
 
         for i, file in enumerate(filenames):
             image = cv2.imread(os.path.join(dirpath, file), cv2.IMREAD_GRAYSCALE)
-            # divide pixel number representative or not?
-            image = cv2.resize(image, (120, 80), interpolation = cv2.INTER_AREA) / 255
+            # normalize pixels values to floating point range [0..1] inclusive
+            image = cv2.resize(image, (100, 100), interpolation=cv2.INTER_AREA) / 255
 
             if first:
                 first = False
@@ -37,8 +37,8 @@ def get_mean_vspace(array):
 
 
 def get_mean_diff_array(array, mean_array):
-    return array-mean_array
+    return array - mean_array
 
 
 def get_coeff_array(array):
-    return np.dot(array.T, array)/array.shape[0]
+    return np.dot(array.T, array) / array.shape[0]
