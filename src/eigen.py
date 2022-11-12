@@ -34,44 +34,6 @@ def givenRot(a):
 
   
 
-# def QR_Decomposition(A):
-#     n, m = A.shape # get the shape of A
-#     Q = np.empty((n, n)) # initialize matrix Q
-#     u = np.empty((n, n)) # initialize matrix u
-#     u[:, 0] = A[:, 0]
-#     Q[:, 0] = u[:, 0] / np.linalg.norm(u[:, 0])
-
-#     for i in range(1, n):
-
-#         u[:, i] = A[:, i]
-#         for j in range(i):
-#             u[:, i] -= (A[:, i] @ Q[:, j]) * Q[:, j] # get each u vector
-#         Q[:, i] = u[:, i] / np.linalg.norm(u[:, i]) # compute each e vetor
-#     R = np.zeros((n, m))
-#     for i in range(n):
-#         for j in range(i, m):
-#             R[i, j] = A[:, j] @ Q[:, i]
-
-#     return Q, R
-
-# def QR_eigvals(A, tol=1e-12, maxiter=1000):
-#     A_old = np.copy(A)
-#     A_new = np.copy(A)
-
-#     diff = np.inf
-#     i = 0
-#     while (diff > tol) and (i < maxiter):
-#         A_old[:, :] = A_new
-#         Q, R = QR_Decomposition(A_old)
-
-#         A_new[:, :] = R @ Q
-
-#         diff = np.abs(A_new - A_old).max()
-#         i += 1
-#     eigvals = np.diag(A_new)
-
-#     return eigvals
-
 
 # a = np.random.rand(8,8)
 # # a = np.random.randint(99,size=(100,100))
@@ -79,16 +41,22 @@ def givenRot(a):
 
 def eig(a,maxiter=1000):
     n = len(a)
-    aTemp = givenRot(a)
-    # aTemp = a
+    #aTemp = givenRot(a)
+    aTemp = a
     eigenvec = np.identity(n)
     for i in range(maxiter):
         q, r = qr(aTemp)
         aTemp = np.matmul(r,q)
         eigenvec = np.matmul(eigenvec,q)
+        
     eigenval = np.diag(aTemp)
-    
-    return eigenval, eigenvec
+
+    x = []
+
+    for i in range(n):
+        x.append((eigenval[i],eigenvec[i]))
+
+    return sorted(x,key=lambda p: abs(p[0]))[::-1]
 
 # b,c = qr(a)
 # print(np.matmul(b,c))
@@ -114,10 +82,13 @@ def eig(a,maxiter=1000):
 # # gRot[0][1] = s
 # # print(gRot)
 
-# a = np.array([[80,4,22,1,40,63,8],[24,41,6,53,2,41,2],
-#                 [9,24,6,-38,3,27,19],[-23,-29,-54,29,11,67,47],
-#                 [1,82,10,12,8,23,28],[-12,43,3,-22,72,21,36],
-#                 [11,12,1,35,1,86,90]])
+def sorting(numbers_array):
+    return sorted(numbers_array, key = abs)
+
+a = np.array([[80,4,22,1,40,63,8],[24,41,6,53,2,41,2],
+                [9,24,6,-38,3,27,19],[-23,-29,-54,29,11,67,47],
+                [1,82,10,12,8,23,28],[-12,43,3,-22,72,21,36],
+                [11,12,1,35,1,86,90]])
 
 # # print(np.matmul(gRot,b))
 # # print(eig(a,100))
@@ -125,11 +96,12 @@ def eig(a,maxiter=1000):
 # # print(eig(a,700))
 # # print(eig(a,10000))
 
-# f,g = eig(a)
+# f = eig(a)
 
 # s,t = la.eig(a)
-# print(t)
-# print()
-# print(g)
+# print((s[0],t[0]))
+# # print(t)
+# print(f[0])
+# print(f[0])
 
 # # print(givenRot(b))
