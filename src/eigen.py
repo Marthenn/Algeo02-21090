@@ -3,6 +3,7 @@ from numpy import linalg as la
 
 def qr(a):
     n = len(a)
+    a = np.array(a,'float')
     q = np.empty(shape=[n,n])
     r = np.zeros(shape=[n,n])
     for i in range(n):
@@ -30,9 +31,32 @@ def givenRot(a):
             gRot[i][j+1] = -s
             gRot[j+1][i] = s
             a = np.matmul(np.matmul(gRot,a),gRot.transpose())
+            a[i][j] = 0
     return a  
 
-  
+
+def QR_factorisation_Householder_double(A):
+    """Perform QR factorisation in double floating-point precision.
+    :param A: The matrix to factorise.
+    :type A: :py:class:`numpy.ndarray`
+    :returns: The matrix Q and the matrix R.
+    :rtype: tuple
+    """
+    A = np.array(A, 'float')
+
+    n, m = A.shape
+    V = np.zeros_like(A, 'float')
+    for k in range(n):
+        V[k:, k] = A[k:, k].copy()
+        V[k, k] += np.sign(V[k, k]) * np.linalg.norm(V[k:, k], 2)
+        V[k:, k] /= np.linalg.norm(V[k:, k], 2)
+        A[k:, k:] -= 2 * np.outer(V[k:, k], np.dot(V[k:, k], A[k:, k:]))
+    R = np.triu(A[:n, :n])
+
+    Q = np.eye(m, n)
+    for k in range((n - 1), -1, -1):
+        Q[k:, k:] -= np.dot((2 * (np.outer(V[k:, k], V[k:, k]))), Q[k:, k:])
+    return Q, R
 
 
 # a = np.random.rand(8,8)
@@ -54,7 +78,7 @@ def eig(a,maxiter=1000):
     x = []
 
     for i in range(n):
-        x.append((eigenval[i],eigenvec[i]))
+        x.append((eigenval[i],eigenvec[:,i]))
 
     return sorted(x,key=lambda p: abs(p[0]))[::-1]
 
