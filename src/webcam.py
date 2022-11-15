@@ -2,14 +2,12 @@ import cv2
 import math
 import numpy as np
 from PIL import Image
+from scipy.ndimage import gaussian_filter
 
 # TODO: Multi-threaded optimization to achieve better fps
 
 face_cascade = cv2.CascadeClassifier('../haarcascades/haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('../haarcascades/haarcascade_eye.xml')
-
-camera = cv2.VideoCapture(0)
-frame_count = 0
 
 
 def euclidean_distance(a, b):
@@ -21,8 +19,8 @@ def euclidean_distance(a, b):
 
 
 # CAUTION: image not mirror'd
-def align_face(image_frame_gs):
-    eyes = eye_cascade.detectMultiScale(image_frame_gs, 1.3, 6)
+def align_face(image_frame):
+    eyes = eye_cascade.detectMultiScale(image_frame, 1.05, 5)
 
     if len(eyes) != 2:
         return None
@@ -58,63 +56,76 @@ def align_face(image_frame_gs):
     angle *= 180
     angle /= math.pi
 
-    aligned_face = np.array(Image.fromarray(image_frame_gs).rotate(angle * clockwise))
+    aligned_face = np.array(Image.fromarray(image_frame).rotate(angle * clockwise))
 
-    faces = face_cascade.detectMultiScale(aligned_face, 1.05, 5, minSize=(200, 200))
+    faces = face_cascade.detectMultiScale(aligned_face, 1.08, 5, minSize=(150, 150))
 
     for (x_start, y_start, dx, dy) in faces:
-        aligned_face = aligned_face[y_start:dy + y_start, x_start:x_start + dx]
+        aligned_face = aligned_face[y_start-20:dy + y_start+20, x_start-20:x_start + dx+20]
         break
 
     return aligned_face
 
 
-import threading
+def start_webcam():
+    retry = False
+    retry_count = 0
+    frame_count = 0
+    camera = cv2.VideoCapture(0)
 
-retry = False
-retry_count = 0
+    # keep camera alive
+    while cv2.waitKey(1) == -1:
+        available, rgb_frame = camera.read()
 
-# keep camera alive
-while cv2.waitKey(1) == -1:
-    available, rgb_frame = camera.read()
+        if not available:
+            continue
 
-    if not available:
-        continue
+        frame_count += 1
 
-    frame_count += 1
+        grey_scale_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2GRAY)
+        # test for min size
+        faces = face_cascade.detectMultiScale(grey_scale_frame, 1.05, 5, minSize=(100, 100))
+        for (x_start, y_start, dx, dy) in faces:
+            if frame_count % 100 == 0 or (retry is True and retry_count <= 50):
+                # add pixels so we won't get images with black corners
+                face_frame = rgb_frame[y_start - 80:, x_start - 80:x_start + dx + 80]
+                try:
+                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
+                                face_frame)
+                    print('pre-processing face')
+                    processed_image = preprocess_image(face_frame)
 
-    grey_scale_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2GRAY)
-    # test for min size
-    faces = face_cascade.detectMultiScale(grey_scale_frame, 1.05, 5, minSize=(100, 100))
-    for (x_start, y_start, dx, dy) in faces:
-        if frame_count % 100 == 0 or (retry is True and retry_count <= 30):
-            face_frame = rgb_frame[y_start - 60:dy + y_start + 60, x_start - 60:x_start + dx + 60]
-            try:
-                cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg", face_frame)
-                print('aligning face')
-                aligned_face = align_face(face_frame)
+                    if processed_image is None:
+                        retry = True
+                        retry_count += 1
+                        print('retry none')
+                        continue
 
-                if aligned_face is None:
+                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe1.jpg",
+                                processed_image)
+
+                    print('face aligned!')
+                    retry = False
+                    retry_count = 0
+
+                except cv2.error as exp:
+                    print(processed_image)
                     retry = True
                     retry_count += 1
                     retry_count %= 100
-                    print('retry none')
-                    continue
+                    print(exp)
 
-                cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe.jpg",
-                            aligned_face)
+            cv2.rectangle(rgb_frame, (x_start, y_start), (x_start + dx, y_start + dy), (255, 0, 0), 2)
+            cv2.putText(rgb_frame, 'Zidane', (x_start, y_start - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-                print('face aligned!')
-                retry = False
-                retry_count = 0
+        cv2.imshow('webcam', rgb_frame)
 
-            except cv2.error:
-                retry = True
-                retry_count += 1
-                retry_count %= 100
-                print('retry exception')
 
-        cv2.rectangle(rgb_frame, (x_start, y_start), (x_start + dx, y_start + dy), (255, 0, 0), 2)
-        cv2.putText(rgb_frame, 'Zidane', (x_start, y_start - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+def preprocess_image(image):
+    image = align_face(image)
+    blurred_image = gaussian_filter(image, sigma=3)
+    return blurred_image
 
-    cv2.imshow('webcam', rgb_frame)
+
+if __name__ == '__main__':
+    start_webcam()
