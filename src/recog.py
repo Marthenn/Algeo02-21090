@@ -2,6 +2,7 @@ import os, cv2
 import numpy as np
 from otf import *
 from eigen import *
+from eigenface import *
 
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
 def get_test_coeff(path,mean_face):
@@ -12,16 +13,10 @@ def get_test_coeff(path,mean_face):
     p[0,:] = test_image
     test_image = p
     test_normalized = get_mean_diff_array(test_image,mean_face)
-    coeff_arr = get_coeff_array(test_normalized)
-    test_eigen = eig(coeff_arr)
-    eigVal = list(list(zip(*test_eigen))[0])
-    # eigVal = np.array([])
-    # for eVal in test_eigen:
-    #     eigVal = np.append(eigVal, eVal[0])
-    # arr = list(zip(*test_eigen))[1][0]/la.norm(list(zip(*test_eigen))[1][0]) * 255
-    # np.savetxt('myeigenvecresult.txt',arr,fmt='%.4e')
-    # cv2.imwrite('abc.png',arr.reshape(16,16))
-    return eigVal
+    test_eigenface = eigenfaces(test_normalized)
+    test_eigenface = test_eigenface.T
+    test_weight = np.multiply(test_eigenface,test_normalized)
+    return test_weight
 
 # mencari jarak euclidean antara dua array
 def euclidean(a,b):
@@ -41,6 +36,7 @@ def find_min_euclid(test,data,treshold=0.2):
     else:
         return None #kalau min di atas treshold maka gk dapat apa"
 
+# cari 
 def find_match(test_path,data_path):
     print('masuk ke find math')
     test_weight = get_test_coeff(test_path,0)
