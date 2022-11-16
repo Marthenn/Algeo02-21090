@@ -22,8 +22,7 @@ def build_dict_eigen(mean_face, eigen_faces, recognized_faces=None):
 
         recognized faces format:
             type: tuple
-            format: (name, weight array)
-
+            format: (name, weight array, path image)
     """
 
     face_dict = {}
@@ -44,12 +43,61 @@ def build_dict_eigen(mean_face, eigen_faces, recognized_faces=None):
 
     for i, el in enumerate(recognized_faces):
         key_name = 'recognized-face-{}'.format(i + 1)
-        dict_ins = {'name': el[0], 'weight': str(el[1])}
+        dict_ins = {'name': el[0], 'weight': str(el[1]), 'path': el[2]}
         recogd_dict.update({key_name: dict_ins})
 
     eigen_dict.update({'recognized-face': recogd_dict})
 
     return eigen_dict
+
+
+# db yml generated from this file and has not been edited, not an arbitrary yml
+# NOTE: please refer to doc/db-dictionary-doc.txt for the dictionary sample
+def read_from_yml(path, file_name):
+    with open(os.path.join(path, file_name)) as file:
+        yml_dict = yaml.full_load(file)
+
+    # parse mean-face arr
+    mean_face = np.array(yml_dict.get('mean-face').replace('[', '').replace(']', '').replace('  ', ' ').split(' '))
+    mean_face = mean_face[mean_face != ''].astype(float)
+
+    yml_dict['mean-face'] = mean_face
+
+    # parse eigenface
+    raw_eigenface = yml_dict.get('eigen-face')
+
+    eigen_list = None
+
+    for i, el in enumerate(raw_eigenface):
+        arr = np.array(yml_dict.get('eigen-face').get(el).replace('[', '').replace(']', '').replace('  ', ' ').split(' '))
+        arr = arr[arr != ''].astype(float)
+
+        if i == 0:
+            eigen_list = np.empty((len(raw_eigenface), len(arr)))
+
+        eigen_list[i] = arr
+
+    yml_dict['eigen-face'] = eigen_list
+
+    # parse recognized-face
+    recogd_faces = yml_dict.get('recognized-face')
+
+    recogd_list = []
+
+    for i, el in enumerate(recogd_faces):
+        face = recogd_faces.get(el)
+        print(face)
+
+        weight_arr = np.array(face.get('weight').replace('[', '').replace(']', '').replace('  ', ' ').split(','))
+        weight_arr = weight_arr[weight_arr != ''].astype(float)
+
+        tup = (face.get('name'), weight_arr, face.get('path'))
+
+        recogd_list.append(tup)
+
+    yml_dict['recognized-face'] = recogd_faces
+
+    return yml_dict
 
 
 # sample code
@@ -59,7 +107,12 @@ if __name__ == '__main__':
     mean_face = otf.get_mean_vspace(pict_arr)
     eigen_faces = np.arange(100).reshape(10, 10)
 
-    recog_faces = [('zidane', [1, 2, 3, 4, 5, ]), ('palkon', [1, 2, 4, 5, 67])]
+    arr = np.array([1, 2, 10, 2, 12, 2])
+    print(arr[arr != 2])
+
+    recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
+                   ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
     dict = build_dict_eigen(mean_face, eigen_faces, recog_faces)
 
     save(dict, '../test/train')
+    read_from_yml('../test/train', 'db.yml')
