@@ -1,10 +1,9 @@
 import os.path
 import sys
-from collections import OrderedDict
 
-import numpy as np
 import yaml
-import otf
+from otf import *
+from eigenface import eigenfaces
 
 
 def save(dictionary, output_dir):
@@ -24,12 +23,13 @@ def build_dict_eigen(mean_face, eigen_faces, recognized_faces=None):
             type: tuple
             format: (name, weight array, path image)
     """
+    np.set_printoptions(threshold=sys.maxsize)
 
     face_dict = {}
 
     for i, el in enumerate(eigen_faces):
         key_name = 'eigen-{}'.format(i + 1)
-        face_dict.update({key_name: str(el)})
+        face_dict.update({key_name: str(el).replace('\n', '').replace('\\', '')})
 
     eigen_dict = {}
 
@@ -43,7 +43,7 @@ def build_dict_eigen(mean_face, eigen_faces, recognized_faces=None):
 
     for i, el in enumerate(recognized_faces):
         key_name = 'recognized-face-{}'.format(i + 1)
-        dict_ins = {'name': el[0], 'weight': str(el[1]), 'path': el[2]}
+        dict_ins = {'name': el[0], 'weight': str(el[1]).replace('\n', '').replace('\\', ''), 'path': el[2]}
         recogd_dict.update({key_name: dict_ins})
 
     eigen_dict.update({'recognized-face': recogd_dict})
@@ -69,7 +69,8 @@ def read_from_yml(path, file_name):
     eigen_list = None
 
     for i, el in enumerate(raw_eigenface):
-        arr = np.array(yml_dict.get('eigen-face').get(el).replace('[', '').replace(']', '').replace('  ', ' ').split(' '))
+        arr = np.array(
+            yml_dict.get('eigen-face').get(el).replace('[', '').replace(']', '').replace('  ', ' ').split(' '))
         arr = arr[arr != ''].astype(float)
 
         if i == 0:
@@ -86,7 +87,6 @@ def read_from_yml(path, file_name):
 
     for i, el in enumerate(recogd_faces):
         face = recogd_faces.get(el)
-        print(face)
 
         weight_arr = np.array(face.get('weight').replace('[', '').replace(']', '').replace('  ', ' ').split(','))
         weight_arr = weight_arr[weight_arr != ''].astype(float)
@@ -102,17 +102,29 @@ def read_from_yml(path, file_name):
 
 # sample code
 if __name__ == '__main__':
-    np.set_printoptions(threshold=sys.maxsize)
-    pict_arr = otf.get_pict_array('../test/train')
-    mean_face = otf.get_mean_vspace(pict_arr)
-    eigen_faces = np.arange(100).reshape(10, 10)
 
-    arr = np.array([1, 2, 10, 2, 12, 2])
-    print(arr[arr != 2])
+    url = '../test/train'
+    pict_arr = get_pict_array(url)
+    folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
+    faces = eigenfaces(get_mean_diff_array(pict_arr, get_mean_vspace(pict_arr))).T
+    mean_face = get_mean_vspace(pict_arr)
 
-    recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
-                   ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
-    dict = build_dict_eigen(mean_face, eigen_faces, recog_faces)
+    yml_dict = build_dict_eigen(mean_face, faces, [])
+    save(yml_dict, "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090")
+    dict = read_from_yml("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090", "db.yml")
+    print(dict)
 
-    save(dict, '../test/train')
-    read_from_yml('../test/train', 'db.yml')
+    # np.set_printoptions(threshold=sys.maxsize)
+    # pict_arr = otf.get_pict_array('../test/train')
+    # mean_face = otf.get_mean_vspace(pict_arr)
+    # eigen_faces = np.arange(100).reshape(10, 10)
+    #
+    # arr = np.array([1, 2, 10, 2, 12, 2])
+    # print(arr[arr != 2])
+    #
+    # recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
+    #                ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
+    # dict = build_dict_eigen(mean_face, eigen_faces, recog_faces)
+    #
+    # save(dict, '../test/train')
+    # read_from_yml('../test/train', 'db.yml')
