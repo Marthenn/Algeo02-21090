@@ -7,13 +7,13 @@ from otf import *
 from eigenface import eigenfaces
 from util import *
 import cv2
-
+from scipy.ndimage import gaussian_filter
 
 def get_weight(face, face_normalized):
     return np.multiply(face, face_normalized)
 
 
-def build_recog_face(folder_path, mean_face):
+def build_recog_face(folder_path, mean_face, eigenface):
     """
         folder_path: path to folder containing images
         return: list of tuple (name, weight, path)
@@ -25,20 +25,24 @@ def build_recog_face(folder_path, mean_face):
         if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
             path = os.path.join(folder_path, filename)
             face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+            # face_arr = gaussian_filter(face_arr, sigma=3)
             face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
             face_arr = face_arr.flatten()
             p = np.empty(shape=[1, len(face_arr)])
             p[0, :] = face_arr
             face_arr = p
-            face_normalized = get_mean_diff_array(face_arr, mean_face)
-            face_eigenface = eigenfaces(face_normalized).T
-
-            face_eigenface = normalize_image_value(face_eigenface)
-            weight = get_weight(face_eigenface, face_normalized)
-            weight = np.array(weight).flatten()
+            face_normalized = get_mean_diff_array(face_arr, mean_face).flatten()
+            eigenface = normalize_image_value(eigenface)/255
+            print('face_eigenface shape: {}'.format(eigenface.shape))
+            print('max',end=': ');print(eigenface.max())
+            print('min',end=': ');print(eigenface.min())
+            print(len(eigenface))
+            print(face_normalized.shape)
+            weight = np.array([np.dot(eigenface[i], face_normalized) for i in range(len(eigenface))])
+            print(weight.shape)
 
             tup = (filename, weight, path)
-            print(tup)
+            # print(tup)
 
             recogd_list.append(tup)
 
@@ -146,8 +150,8 @@ if __name__ == '__main__':
     folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
     mean_face = get_mean_vspace(pict_arr)
     faces = eigenfaces(get_mean_diff_array(pict_arr, mean_face)).T
-    recog_faces = build_recog_face(url, mean_face)
-    print(recog_faces)
+    recog_faces = build_recog_face(url, mean_face, faces)
+    # print(recog_faces)
     yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
     save(yml_dict, "D:\Kuliah\Semester 3\AlGeo\Algeo02-21090")
     # dict = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090", "db.yml")
