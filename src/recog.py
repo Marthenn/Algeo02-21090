@@ -10,7 +10,7 @@ from scipy.ndimage import gaussian_filter
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
 def get_test_coeff(path,mean_face,eigenface):
     test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    # test_image = gaussian_filter(test_image, sigma=3)
+    test_image = gaussian_filter(test_image, sigma=2)
     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
     test_image = test_image.flatten()
     p = np.empty(shape=[1,len(test_image)])
@@ -29,6 +29,12 @@ def get_test_coeff(path,mean_face,eigenface):
     # print(test_weight.shape)
     # print("test_weight")
     # print(test_weight)
+    cetak_komuk = np.array([(test_weight[i]*eigenface[i]) for i in range(len(eigenface))])
+    cetak_komuk = np.sum(cetak_komuk,axis=0)
+    # print(cetak_komuk.shape)
+    # print(mean_face.shape)
+    cetak_komuk = normalize_image_value(cetak_komuk)
+    cv2.imwrite("cetak_komuk.jpg",cetak_komuk.reshape(80,80))
     return test_weight
 
 # def get_test_coeff(path,mean_face):
@@ -61,7 +67,7 @@ def find_min_euclid(test,data,treshold):
             min = temp
             tup = data[i]
         #print(min)
-    # print(min)
+    print(min)
     if min<treshold:
         return tup
     else:
@@ -86,10 +92,11 @@ def get_treshold(data):
             temp = euclidean(data[i][1],data[j][1])
             if temp > max:
                 max = temp
-    return 0.5*max
+    return 0.1*max
 
 # test code using some samples image
 if __name__ == '__main__':
     data = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090","db.yml")
-    # print(get_treshold(data))
-    find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\src\test_lama.jpg",data,get_treshold(data))
+    tres = get_treshold(data)
+    print(tres)
+    find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\test\train\Pedro Alonso\Pedro Alonso4_2173.jpg",data,tres)
