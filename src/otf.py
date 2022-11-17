@@ -1,10 +1,8 @@
 import os
-import time
 
 import numpy as np
 import cv2
-import eigen
-
+import util
 
 def get_pict_array(url):
     array = []
@@ -19,7 +17,7 @@ def get_pict_array(url):
         for j, file in enumerate(filenames):
             image = cv2.imread(os.path.join(dirpath, file), cv2.IMREAD_GRAYSCALE)
             # normalize pixels values to floating point range [0..1] inclusive
-            image = cv2.resize(image, (50, 50), interpolation=cv2.INTER_AREA) / 255
+            image = cv2.resize(image, (util.get_image_dim(), util.get_image_dim()), interpolation=cv2.INTER_AREA) / 255
 
             if first:
                 first = False
