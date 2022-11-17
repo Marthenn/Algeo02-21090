@@ -95,7 +95,7 @@ def read_from_yml(path, file_name):
 
         recogd_list.append(tup)
 
-    yml_dict['recognized-face'] = recogd_faces
+    yml_dict['recognized-face'] = recogd_list
 
     return yml_dict
 
@@ -108,8 +108,9 @@ if __name__ == '__main__':
     folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
     faces = eigenfaces(get_mean_diff_array(pict_arr, get_mean_vspace(pict_arr))).T
     mean_face = get_mean_vspace(pict_arr)
-
-    yml_dict = build_dict_eigen(mean_face, faces, [])
+    recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
+                    ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
+    yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
     save(yml_dict, "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090")
     dict = read_from_yml("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090", "db.yml")
     print(dict)
