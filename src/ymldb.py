@@ -1,6 +1,7 @@
 import os.path
 import sys
 
+import numpy as np
 import yaml
 from otf import *
 from eigenface import eigenfaces
@@ -88,7 +89,7 @@ def read_from_yml(path, file_name):
     for i, el in enumerate(recogd_faces):
         face = recogd_faces.get(el)
 
-        weight_arr = np.array(face.get('weight').replace('[', '').replace(']', '').replace('  ', ' ').split(','))
+        weight_arr = np.array(face.get('weight').replace('[', '').replace(']', '').replace('  ', ' ').split(' '))
         weight_arr = weight_arr[weight_arr != ''].astype(float)
 
         tup = (face.get('name'), weight_arr, face.get('path'))
@@ -108,8 +109,8 @@ if __name__ == '__main__':
     folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
     faces = eigenfaces(get_mean_diff_array(pict_arr, get_mean_vspace(pict_arr))).T
     mean_face = get_mean_vspace(pict_arr)
-    recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
-                    ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
+    recog_faces = [('zidane', np.arange(100), '127.0.0.1:8081/imek1.jpg'),
+                    ('palkon', np.arange(100), '127.0.0.1:8081/imek1.jpg')]
     yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
     save(yml_dict, "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090")
     dict = read_from_yml("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090", "db.yml")
