@@ -26,10 +26,9 @@ def get_test_coeff(path,mean_face,eigenface):
     # test_eigenface = test_eigenface.flatten()
     eigenface = normalize_image_value(eigenface)/255
     test_weight = np.array([np.dot(eigenface[i], test_normalized) for i in range(len(eigenface))])
-    print(test_weight)
-    print(test_weight.shape)
-    print("test_weight")
-    print(test_weight)
+    # print(test_weight.shape)
+    # print("test_weight")
+    # print(test_weight)
     return test_weight
 
 # def get_test_coeff(path,mean_face):
@@ -52,29 +51,29 @@ def euclidean(a,b):
     return np.sqrt(np.sum((a-b)**2))
 
 # mencari jarak euclidean antara test image dengan eigenface hasil training minimum
-def find_min_euclid(test,data,treshold=2793.0771021982046):
+def find_min_euclid(test,data,treshold):
     data = data['recognized-face']
     min = euclidean(test,normalize_image_value(data[0][1])) #asumsi terdapat setidaknya satu data
-    minIdx = 0 #index lokasi minimum sekarang
+    tup = data[0] #index lokasi minimum sekarang
     for i in range(1,len(data)):
-        temp = euclidean(test,normalize_image_value(data[i][1]))
+        temp = euclidean(test,data[i][1])
         if temp < min:
             min = temp
             tup = data[i]
         #print(min)
-    print(min)
+    # print(min)
     if min<treshold:
         return tup
     else:
         return None #kalau min di atas treshold maka gk dapat apa"
 
 # cari pasangan yang cocok
-def find_match(test_path,data):
+def find_match(test_path,data,treshold):
     test_weight = get_test_coeff(test_path,data['mean-face'],data['eigen-face'])
-    tup = find_min_euclid(test_weight,data)
+    tup = find_min_euclid(test_weight,data,treshold)
     if(tup != None):
         print(tup[0])
-        print(tup[1])
+        # print(tup[1])
     else:
         print("tidak ditemukan")
 
@@ -92,6 +91,5 @@ def get_treshold(data):
 # test code using some samples image
 if __name__ == '__main__':
     data = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090","db.yml")
-    print(data['recognized-face'][0][1].size)
-    print('treshold',end=': ');print(get_treshold(data))
-    find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\src\test_komukSendiri.jpg",data)
+    # print(get_treshold(data))
+    find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\src\test_lama.jpg",data,get_treshold(data))
