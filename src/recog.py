@@ -6,10 +6,12 @@ from eigenface import *
 from ymldb import *
 from util import *
 from scipy.ndimage import gaussian_filter
+import src.imageprocessor.improc as improc
 
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
 def get_test_coeff(path,mean_face,eigenface):
-    test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    #test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    test_image = improc.hist_eq(cv2.imread(path, cv2.IMREAD_GRAYSCALE))
     test_image = gaussian_filter(test_image, sigma=3)
     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
     test_image = test_image.flatten()
@@ -87,7 +89,7 @@ def get_treshold(data):
             temp = euclidean(data[i][1],data[j][1])
             if temp > max:
                 max = temp
-    return 0.1*max
+    return 0.5*max
 
 # test code using some samples image
 if __name__ == '__main__':
