@@ -17,7 +17,7 @@ def build(url):
 
                 for (x_start, y_start, dx, dy) in faces:
                     new_image = image[y_start:y_start+dy, x_start:x_start + dx]
-                    cv2.imwrite(os.path.join(dirpath, file), new_image)
+                    cv2.imwrite(os.path.join(dirpath.replace('ny', 'new_val'), file), new_image)
 
                     break
 
@@ -25,4 +25,4 @@ def build(url):
                 print(exp)
 
 
-build('../../test/new_train')
+build('../../test/ny')
