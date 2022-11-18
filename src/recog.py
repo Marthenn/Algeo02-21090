@@ -10,7 +10,7 @@ from scipy.ndimage import gaussian_filter
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
 def get_test_coeff(path,mean_face,eigenface):
     test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    test_image = gaussian_filter(test_image, sigma=2)
+    test_image = gaussian_filter(test_image, sigma=3)
     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
     test_image = test_image.flatten()
     p = np.empty(shape=[1,len(test_image)])
@@ -29,12 +29,12 @@ def get_test_coeff(path,mean_face,eigenface):
     # print(test_weight.shape)
     # print("test_weight")
     # print(test_weight)
-    cetak_komuk = np.array([(test_weight[i]*eigenface[i]) for i in range(len(eigenface))])
-    cetak_komuk = np.sum(cetak_komuk,axis=0)
+    # cetak_komuk = np.array([(test_weight[i]*eigenface[i]) for i in range(len(eigenface))])
+    # cetak_komuk = np.sum(cetak_komuk,axis=0)
     # print(cetak_komuk.shape)
     # print(mean_face.shape)
-    cetak_komuk = normalize_image_value(cetak_komuk)
-    cv2.imwrite("cetak_komuk.jpg",cetak_komuk.reshape(80,80))
+    # cetak_komuk = normalize_image_value(cetak_komuk)
+    # cv2.imwrite("cetak_komuk.jpg",cetak_komuk.reshape(80,80))
     return test_weight
 
 # def get_test_coeff(path,mean_face):
@@ -76,12 +76,7 @@ def find_min_euclid(test,data,treshold):
 # cari pasangan yang cocok
 def find_match(test_path,data,treshold):
     test_weight = get_test_coeff(test_path,data['mean-face'],data['eigen-face'])
-    tup = find_min_euclid(test_weight,data,treshold)
-    if(tup != None):
-        print(tup[0])
-        # print(tup[1])
-    else:
-        print("tidak ditemukan")
+    return find_min_euclid(test_weight,data,treshold)
 
 # cari treshold
 def get_treshold(data):
@@ -99,4 +94,8 @@ if __name__ == '__main__':
     data = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090","db.yml")
     tres = get_treshold(data)
     print(tres)
-    find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\test\train\Pedro Alonso\Pedro Alonso4_2173.jpg",data,tres)
+    res = find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\src\marthen.jpg",data,tres)
+    if(res != None):
+        print(res[0])
+    else:
+        print("no match")
