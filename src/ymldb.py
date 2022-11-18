@@ -20,31 +20,35 @@ def build_recog_face(folder_path, mean_face, eigenface):
     """
     recogd_list = []
 
-    for filename in os.listdir(folder_path):
-        print('Processing {}'.format(filename))
-        if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
-            path = os.path.join(folder_path, filename)
-            face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-            # face_arr = gaussian_filter(face_arr, sigma=3)
-            face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
-            face_arr = face_arr.flatten()
-            p = np.empty(shape=[1, len(face_arr)])
-            p[0, :] = face_arr
-            face_arr = p
-            face_normalized = get_mean_diff_array(face_arr, mean_face).flatten()
-            eigenface = normalize_image_value(eigenface)/255
-            print('face_eigenface shape: {}'.format(eigenface.shape))
-            print('max',end=': ');print(eigenface.max())
-            print('min',end=': ');print(eigenface.min())
-            print(len(eigenface))
-            print(face_normalized.shape)
-            weight = np.array([np.dot(eigenface[i], face_normalized) for i in range(len(eigenface))])
-            print(weight.shape)
+    for i, (dirpath, dirnames, filename) in enumerate(os.walk(folder_path)):
+        if dirpath == folder_path:
+            continue
+        print('Processing {}'.format(os.path.basename(os.path.normpath(dirpath))))
+        for j, pic in enumerate(filename):
+            print('Processing {}'.format(pic))
+            if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg"):
+                path = os.path.join(dirpath, pic)
+                face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+                # face_arr = gaussian_filter(face_arr, sigma=3)
+                face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
+                face_arr = face_arr.flatten()
+                p = np.empty(shape=[1, len(face_arr)])
+                p[0, :] = face_arr
+                face_arr = p
+                face_normalized = get_mean_diff_array(face_arr, mean_face).flatten()
+                eigenface = normalize_image_value(eigenface)/255
+                # print('face_eigenface shape: {}'.format(eigenface.shape))
+                # print('max',end=': ');print(eigenface.max())
+                # print('min',end=': ');print(eigenface.min())
+                # print(len(eigenface))
+                # print(face_normalized.shape)
+                weight = np.array([np.dot(eigenface[i], face_normalized) for i in range(len(eigenface))])
+                # print(weight.shape)
 
-            tup = (filename, weight, path)
-            # print(tup)
+                tup = (os.path.basename(os.path.normpath(dirpath)), weight, path)
+                # print(tup)
 
-            recogd_list.append(tup)
+                recogd_list.append(tup)
 
     return recogd_list
 
