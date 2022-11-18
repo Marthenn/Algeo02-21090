@@ -45,7 +45,7 @@ def build_recog_face(folder_path, mean_face, eigenface):
                 weight = np.array([np.dot(eigenface[i], face_normalized) for i in range(len(eigenface))])
                 # print(weight.shape)
 
-                tup = (os.path.basename(os.path.normpath(dirpath)), weight, path)
+                tup = (os.path.basename(os.path.normpath(dirpath)), weight, os.path.abspath(path))
                 # print(tup)
 
                 recogd_list.append(tup)
