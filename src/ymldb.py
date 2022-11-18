@@ -8,6 +8,7 @@ from eigenface import eigenfaces
 from util import *
 import cv2
 from scipy.ndimage import gaussian_filter
+import src.imageprocessor.improc as improc
 
 def get_weight(face, face_normalized):
     return np.multiply(face, face_normalized)
@@ -28,7 +29,8 @@ def build_recog_face(folder_path, mean_face, eigenface):
             print('Processing {}'.format(pic))
             if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg"):
                 path = os.path.join(dirpath, pic)
-                face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+                face_arr = improc.hist_eq(cv2.imread(path, cv2.IMREAD_GRAYSCALE))
+                #face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
                 # face_arr = gaussian_filter(face_arr, sigma=3)
                 face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
                 face_arr = face_arr.flatten()
@@ -49,6 +51,9 @@ def build_recog_face(folder_path, mean_face, eigenface):
                 # print(tup)
 
                 recogd_list.append(tup)
+
+            if j == 1:
+                break
 
     return recogd_list
 
@@ -149,15 +154,16 @@ def read_from_yml(path, file_name):
 
 # sample code
 if __name__ == '__main__':
-    url = '../test/train'
+    url = '../test/new_train'
     pict_arr = get_pict_array(url)
-    folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
+  #  folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
     mean_face = get_mean_vspace(pict_arr)
     faces = eigenfaces(get_mean_diff_array(pict_arr, mean_face)).T
-    recog_faces = build_recog_face(url, mean_face, faces)
+    faces = faces[:50, :]
+    recog_faces = build_recog_face('../test/new_train', mean_face, faces)
     # print(recog_faces)
     yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
-    save(yml_dict, "D:\Kuliah\Semester 3\AlGeo\Algeo02-21090")
+    save(yml_dict, "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090")
     # dict = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090", "db.yml")
     # print(dict)
 
