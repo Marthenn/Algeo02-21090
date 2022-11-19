@@ -23,10 +23,10 @@ def preprocess_image(image):
 
 
 def align_face(image_frame):
-    face_cascade_name = cv2.data.haarcascades + 'haarcascade_eye.xml'
-    face_cascadex = cv2.CascadeClassifier()
-    face_cascadex.load(cv2.samples.findFile(face_cascade_name))
-    eyes = eye_cascade.detectMultiScale(image_frame, 1.5, 4)
+    eyes = eye_cascade.detectMultiScale(image_frame, 1.1, 6)
+
+    if len(eyes) != 2:
+        return None
 
     eye_atas = (0, 0)
     eye_bawah = (0, 0)
@@ -109,10 +109,6 @@ def hist_eq(frame):
                 v = right_face[y][x - mid_point]
 
             frame[y][x] = v
-
-    # cv2.imwrite(
-    #     '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/test/new_train/Adriana_Lima/adriana_limax.jpg',
-    #     frame)
 
     return frame
 
