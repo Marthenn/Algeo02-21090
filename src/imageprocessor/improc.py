@@ -2,11 +2,6 @@ import cv2
 import math
 import numpy as np
 from PIL import Image
-from scipy.ndimage import gaussian_filter
-
-face_cascade = cv2.CascadeClassifier('/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_eye.xml')
-
 
 # TODO: GANTI
 def euclidean_distance(a, b):
@@ -17,12 +12,12 @@ def euclidean_distance(a, b):
     return math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)))
 
 
-def preprocess_image(image):
-    image = align_face(image)
-    return image
-
-
 def align_face(image_frame):
+    face_cascade = cv2.CascadeClassifier(
+        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier(
+        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_eye.xml')
+
     eyes = eye_cascade.detectMultiScale(image_frame, 1.1, 6)
 
     if len(eyes) != 2:
@@ -74,8 +69,10 @@ def align_face(image_frame):
 
 
 def get_faces_inframe(rgb_frame):
+    face_cascade = cv2.CascadeClassifier(
+        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_frontalface_default.xml')
+
     grey_scale_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2GRAY)
-    # test for min size
     faces = face_cascade.detectMultiScale(grey_scale_frame, 1.03, 10, minSize=(100, 100))
 
     return faces
@@ -112,12 +109,3 @@ def hist_eq(frame):
 
     return frame
 
-
-if __name__ == '__main__':
-    image = cv2.imread(
-        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/test/new_train/Adriana_Lima/adriana_lima0.jpg')
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    cv2.imwrite(
-        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/test/new_train/Adriana_Lima/adriana_limay.jpg',
-        image)
-    hist_eq(image)

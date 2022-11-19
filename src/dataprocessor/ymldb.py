@@ -1,14 +1,13 @@
 import os.path
 import sys
 
-import numpy as np
 import yaml
-from otf import *
-from eigenface import eigenfaces
-from util import *
+from src.trainer.otf import *
+from src.eigenface import eigenfaces
+from src.util import *
 import cv2
-from scipy.ndimage import gaussian_filter
 import src.imageprocessor.improc as improc
+
 
 def get_weight(face, face_normalized):
     return np.multiply(face, face_normalized)
@@ -27,33 +26,22 @@ def build_recog_face(folder_path, mean_face, eigenface):
         print('Processing {}'.format(os.path.basename(os.path.normpath(dirpath))))
         for j, pic in enumerate(filename):
             print('Processing {}'.format(pic))
-            if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg"):
+            if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg") or pic.endswith(".pgm"):
                 path = os.path.join(dirpath, pic)
                 face_arr = improc.hist_eq(cv2.imread(path, cv2.IMREAD_GRAYSCALE))
-                #face_arr = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-                # face_arr = gaussian_filter(face_arr, sigma=3)
                 face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
                 face_arr = face_arr.flatten()
                 p = np.empty(shape=[1, len(face_arr)])
                 p[0, :] = face_arr
                 face_arr = p
                 face_normalized = get_mean_diff_array(face_arr, mean_face).flatten()
-                eigenface = normalize_image_value(eigenface)/255
-                # print('face_eigenface shape: {}'.format(eigenface.shape))
-                # print('max',end=': ');print(eigenface.max())
-                # print('min',end=': ');print(eigenface.min())
-                # print(len(eigenface))
-                # print(face_normalized.shape)
+                eigenface = normalize_image_value(eigenface) / 255
+
                 weight = np.array([np.dot(eigenface[i], face_normalized) for i in range(len(eigenface))])
-                # print(weight.shape)
 
                 tup = (os.path.basename(os.path.normpath(dirpath)), weight, os.path.abspath(path))
-                # print(tup)
 
                 recogd_list.append(tup)
-
-            if j == 1:
-                break
 
     return recogd_list
 
@@ -154,30 +142,12 @@ def read_from_yml(path, file_name):
 
 # sample code
 if __name__ == '__main__':
-    url = '../test/new_train'
+    url = '../test/new_train2'
     pict_arr = get_pict_array(url)
-  #  folder_path = "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/eigenfaces/eigenface-{}.jpg"
     mean_face = get_mean_vspace(pict_arr)
     faces = eigenfaces(get_mean_diff_array(pict_arr, mean_face)).T
     faces = faces[:50, :]
-    recog_faces = build_recog_face('../test/new_train', mean_face, faces)
-    # print(recog_faces)
+    recog_faces = build_recog_face(url, mean_face, faces)
     yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
-    save(yml_dict, "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090")
-    # dict = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090", "db.yml")
-    # print(dict)
+    save(yml_dict, "/")
 
-    # np.set_printoptions(threshold=sys.maxsize)
-    # pict_arr = otf.get_pict_array('../test/train')
-    # mean_face = otf.get_mean_vspace(pict_arr)
-    # eigen_faces = np.arange(100).reshape(10, 10)
-    #
-    # arr = np.array([1, 2, 10, 2, 12, 2])
-    # print(arr[arr != 2])
-    #
-    # recog_faces = [('zidane', [1, 2, 3, 4, 5, ], '127.0.0.1:8081/imek1.jpg'),
-    #                ('palkon', [1, 2, 4, 5, 67], '127.0.0.1:8081/imek1.jpg')]
-    # dict = build_dict_eigen(mean_face, eigen_faces, recog_faces)
-    #
-    # save(dict, '../test/train')
-    # read_from_yml('../test/train', 'db.yml')

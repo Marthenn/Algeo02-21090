@@ -25,4 +25,5 @@ def build(url):
                 print(exp)
 
 
-build('../../test/ny')
+if __name__ == '__main__':
+    build('../../test/ny')
