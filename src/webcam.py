@@ -1,11 +1,16 @@
 from src.imageprocessor.improc import *
+from src import recog, ymldb
 
 
 def start_webcam():
+    data = ymldb.read_from_yml("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090", "db.yml")
+    tresh = recog.get_treshold(data)
+
     retry = False
     retry_count = 0
     frame_count = 0
     camera = cv2.VideoCapture(0)
+    name = 'unknown'
 
     # keep camera alive
     while cv2.waitKey(1) == -1:
@@ -19,12 +24,12 @@ def start_webcam():
         # test for min size
         faces = get_faces_inframe(rgb_frame)
         for (x_start, y_start, dx, dy) in faces:
-            if frame_count % 100 == 0 or (retry is True and retry_count <= 50):
+            if frame_count % 50 == 0 or (retry is True and retry_count <= 50) or cv2.waitKey(1) == ord('s'):
                 # add pixels so we won't get images with black corners
                 face_frame = rgb_frame[y_start - 80:, x_start - 80:x_start + dx + 80]
                 try:
                     cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
-                                face_frame)
+                                rgb_frame[y_start:, x_start:x_start + dx])
                     print('pre-processing face')
                     processed_image = preprocess_image(face_frame)
 
@@ -35,11 +40,26 @@ def start_webcam():
                         continue
 
                     cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe1.jpg",
-                                processed_image)
+                                hist_eq(cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)))
+                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe2.jpg",
+                                cv2.equalizeHist(cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)))
 
                     print('face aligned!')
                     retry = False
                     retry_count = 0
+
+                    res = recog.find_match("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe1.jpg",
+                                           data, tresh)
+                    if res is not None:
+                        name = res[0]
+                    else:
+                        res = recog.find_match(
+                            "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
+                            data, tresh)
+                        if res is not None:
+                            name = res[0]
+                        else:
+                            name = 'unknown'
 
                 except cv2.error as exp:
                     retry = True
@@ -47,10 +67,16 @@ def start_webcam():
                     retry_count %= 100
                     print(exp)
 
-            cv2.rectangle(rgb_frame, (x_start, y_start), (x_start + dx, y_start + dy), (255, 0, 0), 2)
-            cv2.putText(rgb_frame, 'Zidane', (x_start, y_start - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                except ZeroDivisionError as exp:
+                    retry = True
+                    retry_count += 1
+                    retry_count %= 100
+                    print(exp)
 
-        cv2.imshow('webcam', rgb_frame)
+            cv2.rectangle(rgb_frame, (x_start, y_start), (x_start + dx, y_start + dy), (255, 0, 0), 2)
+            cv2.putText(rgb_frame, name, (x_start, y_start - 12), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (255, 255, 255), 2)
+
+        cv2.imshow('pres ss to quit', rgb_frame)
 
 
 if __name__ == '__main__':
