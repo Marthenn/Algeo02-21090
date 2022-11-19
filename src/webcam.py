@@ -28,10 +28,10 @@ def start_webcam():
                 # add pixels so we won't get images with black corners
                 face_frame = rgb_frame[y_start - 80:, x_start - 80:x_start + dx + 80]
                 try:
-                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
-                                rgb_frame[y_start:, x_start:x_start + dx])
+                    # cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
+                    #             rgb_frame[y_start:, x_start:x_start + dx])
                     print('pre-processing face')
-                    processed_image = preprocess_image(face_frame)
+                    processed_image = align_face(face_frame)
 
                     if processed_image is None:
                         retry = True
@@ -39,24 +39,17 @@ def start_webcam():
                         print('retry none')
                         continue
 
-                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe1.jpg",
-                                hist_eq(cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)))
-                    cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe2.jpg",
-                                cv2.equalizeHist(cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)))
-
                     print('face aligned!')
                     retry = False
                     retry_count = 0
 
-                    res = recog.find_match("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/camframe1.jpg",
+                    res = recog.find_match(cv2.cvtColor(processed_image, cv2.COLOR_RGB2GRAY),
                                            data, tresh)
                     if res is not None:
                         name = res[0]
                     else:
-                        res = recog.find_match(
-                            "/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/b4eye.jpg",
-                            data, tresh)
                         if res is not None:
+                            res = recog.find_match(cv2.cvtColor(rgb_frame[y_start:, x_start:x_start + dx], cv2.COLOR_RGB2GRAY),data, tresh)
                             name = res[0]
                         else:
                             name = 'unknown'
