@@ -6,12 +6,12 @@ from eigenface import *
 from ymldb import *
 from util import *
 from scipy.ndimage import gaussian_filter
-import src.imageprocessor.improc as improc
+import imageprocessor.improc as improc
 
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
-def get_test_coeff(path,mean_face,eigenface):
+def get_test_coeff(test_image,mean_face,eigenface):
     #test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    test_image = improc.hist_eq(cv2.imread(path, cv2.IMREAD_GRAYSCALE))
+    test_image = improc.hist_eq(test_image)
     test_image = gaussian_filter(test_image, sigma=3)
     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
     test_image = test_image.flatten()
@@ -76,8 +76,8 @@ def find_min_euclid(test,data,treshold):
         return None #kalau min di atas treshold maka gk dapat apa"
 
 # cari pasangan yang cocok
-def find_match(test_path,data,treshold):
-    test_weight = get_test_coeff(test_path,data['mean-face'],data['eigen-face'])
+def find_match(test_face,data,treshold):
+    test_weight = get_test_coeff(test_face,data['mean-face'],data['eigen-face'])
     return find_min_euclid(test_weight,data,treshold)
 
 # cari treshold
@@ -93,10 +93,11 @@ def get_treshold(data):
 
 # test code using some samples image
 if __name__ == '__main__':
-    data = read_from_yml("D:\Kuliah\Semester 3\AlGeo\Algeo02-21090","db.yml")
+    data = read_from_yml("D:/Kuliah/Semester 3/AlGeo/Algeo02-21090/aaa","db.yml")
     tres = get_treshold(data)
     print(tres)
-    res = find_match(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\src\marthen.jpg",data,tres)
+    face_test = cv2.imread(r"D:\Kuliah\Semester 3\AlGeo\Algeo02-21090\test\new_val2\ezra\20221119_124627.jpg", cv2.IMREAD_GRAYSCALE)
+    res = find_match(face_test,data,tres)
     if(res != None):
         print(res[0])
     else:
