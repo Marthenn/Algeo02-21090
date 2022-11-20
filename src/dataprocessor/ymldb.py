@@ -1,9 +1,10 @@
 import os.path
 import sys
 
+
 import yaml
 from src.trainer.otf import *
-from src.eigenface import eigenfaces
+from src.trainer.eigenface import eigenfaces
 from src.util import *
 import cv2
 import src.imageprocessor.improc as improc

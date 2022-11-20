@@ -1,11 +1,14 @@
 # untuk testing accuraccy dan pilih threshold
+import sys
+sys.path.insert(0,'D:\Kuliah\Semester 3\AlGeo\Algeo02-21090')
+
 import os
 from recog import *
 
 
 def test_accuracy(data, treshold):
     print("Testing accuracy with treshold = {}".format(treshold))
-    folder_path = '../test/archive(1)'
+    folder_path = 'test/new_val2'
     true = 0
     total = 0
     tres = treshold
@@ -17,7 +20,8 @@ def test_accuracy(data, treshold):
         for j, pic in enumerate(filename):
             # print('Processing {}'.format(pic))
             if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg") or pic.endswith(".pgm"):
-                res = find_match(os.path.join(dirpath, pic), data, tres)
+                image = cv2.imread(os.path.join(dirpath, pic), cv2.IMREAD_GRAYSCALE)
+                res = find_match(image, data, tres)
                 if res != None:
                     print(os.path.basename(os.path.normpath(dirpath)), res[0], 'path')
                     if res[0] == os.path.basename(os.path.normpath(dirpath)):
@@ -39,7 +43,7 @@ def test_accuracy(data, treshold):
 
 
 if __name__ == '__main__':
-    data = read_from_yml("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090", "db.yml")
+    data = read_from_yml("D:/Kuliah/Semester 3/AlGeo/Algeo02-21090/aaa", "db.yml")
     tresh = get_treshold(data)
     if tresh == 0:
         tresh = 500

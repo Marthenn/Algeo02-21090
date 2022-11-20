@@ -1,5 +1,5 @@
 from src.imageprocessor.improc import *
-from src import recog
+from src.tester import recog
 from src.dataprocessor import ymldb
 
 
