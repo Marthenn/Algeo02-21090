@@ -6,6 +6,7 @@ import yaml
 from src.trainer.otf import *
 from src.trainer.eigenface import eigenfaces
 from src.util import *
+from scipy.ndimage import gaussian_filter
 import cv2
 import src.imageprocessor.improc as improc
 
@@ -30,6 +31,7 @@ def build_recog_face(folder_path, mean_face, eigenface):
             if pic.endswith(".jpg") or pic.endswith(".png") or pic.endswith(".jpeg") or pic.endswith(".pgm"):
                 path = os.path.join(dirpath, pic)
                 face_arr = improc.hist_eq(cv2.imread(path, cv2.IMREAD_GRAYSCALE))
+                face_arr = gaussian_filter(face_arr, sigma=3)
                 face_arr = cv2.resize(face_arr, (80, 80), interpolation=cv2.INTER_AREA) / 255
                 face_arr = face_arr.flatten()
                 p = np.empty(shape=[1, len(face_arr)])
