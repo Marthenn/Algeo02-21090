@@ -43,7 +43,7 @@ def test_accuracy(data, treshold):
 
 
 if __name__ == '__main__':
-    data = read_from_yml("D:/Kuliah/Semester 3/AlGeo/Algeo02-21090/aaa", "db.yml")
+    data = read_from_yml("D:/Kuliah/Semester 3/AlGeo/Algeo02-21090/test", "db.yml")
     tresh = get_treshold(data)
     if tresh == 0:
         tresh = 500
