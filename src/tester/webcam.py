@@ -74,7 +74,9 @@ def start_webcam():
             cv2.rectangle(rgb_frame, (x_start, y_start), (x_start + dx, y_start + dy), (255, 0, 0), 2)
             cv2.putText(rgb_frame, name, (x_start, y_start - 12), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (255, 255, 255), 2)
 
-        cv2.imshow('pres ss to quit', rgb_frame)
+        cv2.imshow('press ss to quit', rgb_frame)
+
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
