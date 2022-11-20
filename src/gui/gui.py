@@ -25,7 +25,7 @@ def start():
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-    
+
 class Ui_MainWindow(object):
     data = None
     tres = None
@@ -65,7 +65,13 @@ class Ui_MainWindow(object):
                 msg.setText("Please select a valid image file")
                 msg.exec_()
     def recogWebcam(self):
-        start_webcam()
+        if self.data == None or self.tres == None:
+            msg = QtWidgets.QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Please train the model first")
+            msg.exec_()
+        else:
+            start_webcam()
     def build_data(self, url):
         import time
         start_time = time.time_ns()
