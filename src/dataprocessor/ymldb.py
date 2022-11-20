@@ -1,6 +1,6 @@
 import os.path
 import sys
-
+sys.path.insert(0,os.path.abspath(os.curdir))
 
 import yaml
 from src.trainer.otf import *
@@ -143,12 +143,12 @@ def read_from_yml(path, file_name):
 
 # sample code
 if __name__ == '__main__':
-    url = '../test/new_train2'
+    url = 'test/new_train2'
     pict_arr = get_pict_array(url)
     mean_face = get_mean_vspace(pict_arr)
     faces = eigenfaces(get_mean_diff_array(pict_arr, mean_face)).T
     faces = faces[:50, :]
     recog_faces = build_recog_face(url, mean_face, faces)
     yml_dict = build_dict_eigen(mean_face, faces, recog_faces)
-    save(yml_dict, "/")
+    save(yml_dict, os.curdir+'/test')
 

@@ -1,8 +1,8 @@
 # untuk testing accuraccy dan pilih threshold
 import sys
-sys.path.insert(0,'D:\Kuliah\Semester 3\AlGeo\Algeo02-21090')
-
 import os
+sys.path.insert(0,os.path.abspath(os.curdir))
+
 from recog import *
 
 

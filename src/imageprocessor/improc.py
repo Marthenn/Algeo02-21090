@@ -1,5 +1,6 @@
 import cv2
 import math
+import os
 import numpy as np
 from PIL import Image
 
@@ -13,10 +14,8 @@ def euclidean_distance(a, b):
 
 
 def align_face(image_frame):
-    face_cascade = cv2.CascadeClassifier(
-        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier(
-        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_eye.xml')
+    face_cascade = cv2.CascadeClassifier(os.curdir+'/haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier(os.curdir+'/haarcascades/haarcascade_eye.xml')
 
     eyes = eye_cascade.detectMultiScale(image_frame, 1.1, 6)
 
@@ -69,8 +68,7 @@ def align_face(image_frame):
 
 
 def get_faces_inframe(rgb_frame):
-    face_cascade = cv2.CascadeClassifier(
-        '/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/Algeo02-21090/haarcascades/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(os.curdir+'/haarcascades/haarcascade_frontalface_default.xml')
 
     grey_scale_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(grey_scale_frame, 1.03, 10, minSize=(100, 100))

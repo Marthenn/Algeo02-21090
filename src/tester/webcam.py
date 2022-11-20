@@ -1,10 +1,14 @@
+import os
+import sys
+sys.path.insert(0,os.path.abspath(os.curdir))
+
 from src.imageprocessor.improc import *
 from src.tester import recog
 from src.dataprocessor import ymldb
 
 
 def start_webcam():
-    data = ymldb.read_from_yml("/", "db.yml")
+    data = ymldb.read_from_yml(os.curdir+'/test', "db.yml")
     tresh = recog.get_treshold(data)
 
     retry = False

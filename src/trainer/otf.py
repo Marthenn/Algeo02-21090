@@ -1,4 +1,6 @@
+import sys
 import os
+sys.path.insert(0,os.path.abspath(os.curdir))
 
 import numpy as np
 import cv2

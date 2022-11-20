@@ -1,5 +1,6 @@
 import sys
-sys.path.insert(0,'D:\Kuliah\Semester 3\AlGeo\Algeo02-21090')
+import os
+sys.path.insert(0,os.path.abspath(os.curdir))
 
 import cv2
 import numpy as np
