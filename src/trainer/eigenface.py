@@ -1,5 +1,5 @@
-from otf import *
-from eigen import eig
+from src.trainer.otf import *
+from src.trainer.eigen import eig
 from numpy import linalg as la
 
 def getEigenface(A,vx):
