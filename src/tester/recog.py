@@ -1,16 +1,19 @@
+import sys
+import os
+sys.path.insert(0,os.path.abspath(os.curdir))
+
 import cv2
 import numpy as np
-from otf import *
-from eigen import *
-from eigenface import *
-from ymldb import *
-from util import *
+from src.trainer.otf import *
+from src.trainer.eigen import *
+from src.trainer.eigenface import *
+from src.dataprocessor.ymldb import *
+from src.util import *
 from scipy.ndimage import gaussian_filter
-import imageprocessor.improc as improc
+import src.imageprocessor.improc as improc
 
 # mencari eigenface dari test image yang dinormalisasi dengan mean_face
 def get_test_coeff(test_image,mean_face,eigenface):
-    #test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     test_image = improc.hist_eq(test_image)
     test_image = gaussian_filter(test_image, sigma=3)
     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
@@ -19,49 +22,17 @@ def get_test_coeff(test_image,mean_face,eigenface):
     p[0,:] = test_image
     test_image = p
     test_normalized = get_mean_diff_array(test_image,mean_face).flatten()
-    # test_eigenface = eigenfaces(test_normalized)
-    # test_eigenface = test_eigenface.T
-    # test_eigenface = test_eigenface.flatten()
-    # test_eigenface = normalize_image_value(test_eigenface)
-    # print(test_eigenface)
-    # return test_eigenface
-    # test_eigenface = test_eigenface.flatten()
-    eigenface = normalize_image_value(eigenface)/255
+    eigenface = util.normalize_image_value(eigenface)/255
     test_weight = np.array([np.dot(eigenface[i], test_normalized) for i in range(len(eigenface))])
-    # print(test_weight.shape)
-    # print("test_weight")
-    # print(test_weight)
-    # cetak_komuk = np.array([(test_weight[i]*eigenface[i]) for i in range(len(eigenface))])
-    # cetak_komuk = np.sum(cetak_komuk,axis=0)
-    # print(cetak_komuk.shape)
-    # print(mean_face.shape)
-    # cetak_komuk = normalize_image_value(cetak_komuk)
-    # cv2.imwrite("cetak_komuk.jpg",cetak_komuk.reshape(80,80))
     return test_weight
 
-# def get_test_coeff(path,mean_face):
-#     test_image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-#     test_image = cv2.resize(test_image, (80, 80), interpolation = cv2.INTER_AREA) / 255
-#     test_image = test_image.flatten()
-#     p = np.empty(shape=[1,len(test_image)])
-#     p[0,:] = test_image
-#     test_image = p
-#     test_normalized = get_mean_diff_array(test_image,mean_face)
-#     test_eigenface = eigenfaces(test_normalized)
-#     test_eigenface = test_eigenface
-#     test_weight = np.array([np.dot(test_eigenface[i],test_normalized) for i in range(len(test_eigenface))])
-#     print(test_weight)
-#     print(test_weight.shape)
-#     return test_weight
-
-# mencari jarak euclidean antara dua array
 def euclidean(a,b):
     return np.sqrt(np.sum((a-b)**2))
 
 # mencari jarak euclidean antara test image dengan eigenface hasil training minimum
 def find_min_euclid(test,data,treshold):
     data = data['recognized-face']
-    min = euclidean(test,normalize_image_value(data[0][1])) #asumsi terdapat setidaknya satu data
+    min = euclidean(test,util.normalize_image_value(data[0][1])) #asumsi terdapat setidaknya satu data
     tup = data[0] #index lokasi minimum sekarang
     for i in range(1,len(data)):
         temp = euclidean(test,data[i][1])

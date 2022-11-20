@@ -1,5 +1,5 @@
-from otf import *
-from eigen import eig
+from trainer.otf import *
+from trainer.eigen import eig
 from numpy import linalg as la
 
 # pict_arr = get_pict_array('/home/archkoi/Desktop/alg/105_classes_pins_dataset')

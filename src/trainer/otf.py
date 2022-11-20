@@ -1,8 +1,11 @@
+import sys
 import os
+sys.path.insert(0,os.path.abspath(os.curdir))
 
 import numpy as np
 import cv2
-import util
+import src.util as util
+
 
 def get_pict_array(url):
     array = []
@@ -24,8 +27,6 @@ def get_pict_array(url):
                 array = image.flatten()
             else:
                 array = np.vstack((array, image.flatten()))
-
-            break
 
     return array
 
@@ -60,18 +61,3 @@ def get_cov_from_file(url):
     pict_arr = get_pict_array(url)
 
     return get_compressed_cov_array(get_mean_diff_array(pict_arr, get_mean_vspace(pict_arr)))
-
-# pict_arr = get_pict_array('../test/train')
-# coeff_arr = get_coeff_array(get_mean_diff_array(pict_arr, get_mean_vspace(pict_arr)))
-#
-# vects = eigen.eig(coeff_arr)[1]
-#
-# for i in range(len(vects)):
-#     print("printing face")
-#     face = np.array(vects[i]).reshape(50, 50)
-#     face *= 255
-#     print(face)
-#     cv2.imwrite("/home/zidane/kuliah/Semester 3/IF2123 - Aljabar Linier dan Geometri/mean_face_.jpg",
-#                 face)
-#
-#     break

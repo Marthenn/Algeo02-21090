@@ -1,5 +1,9 @@
-from otf import *
-from eigen import eig
+import sys
+import os
+sys.path.insert(0,os.path.abspath(os.curdir))
+
+from src.trainer.otf import *
+from src.trainer.eigen import eig
 from numpy import linalg as la
 
 def getEigenface(A,vx):
