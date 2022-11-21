@@ -103,7 +103,6 @@ class Ui_MainWindow(object):
             self.matchLabel.setText(str(res[0]))
             self.closestImage.setPixmap(QtGui.QPixmap(str(res[2])))
             self.closestImage.setScaledContents(True)
-            self.trainingTime.setText(str(time))
         else:
             self.matchLabel.setText('None')
             self.closestImage.setPixmap(QtGui.QPixmap(str('src/gui/none.jpg')))
