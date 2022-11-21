@@ -4,13 +4,9 @@ import os
 import numpy as np
 from PIL import Image
 
-# TODO: GANTI
+
 def euclidean_distance(a, b):
-    x1 = a[0];
-    y1 = a[1]
-    x2 = b[0];
-    y2 = b[1]
-    return math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)))
+    return math.sqrt((math.pow(b[0]-a[0], 2)) + (math.pow(b[1]-a[1], 2)))
 
 
 def align_face(image_frame):
