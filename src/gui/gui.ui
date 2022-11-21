@@ -217,7 +217,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>170</y>
+      <y>160</y>
       <width>251</width>
       <height>251</height>
      </rect>
@@ -227,7 +227,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>170</y>
+      <y>160</y>
       <width>251</width>
       <height>251</height>
      </rect>
@@ -237,7 +237,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>130</y>
+      <y>120</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -256,7 +256,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>130</y>
+      <y>120</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -275,7 +275,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>140</y>
+      <y>110</y>
       <width>191</width>
       <height>31</height>
      </rect>
@@ -294,7 +294,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>260</y>
+      <y>270</y>
       <width>191</width>
       <height>31</height>
      </rect>
@@ -316,7 +316,7 @@ background:rgb(0,0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>300</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -355,7 +355,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>170</y>
+      <y>180</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -403,7 +403,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+      <y>370</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -442,7 +442,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>410</y>
       <width>191</width>
       <height>31</height>
      </rect>
@@ -450,7 +450,7 @@ color:white;
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>16</pointsize>
+      <pointsize>12</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -464,28 +464,6 @@ color:white;
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>440</y>
-      <width>191</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>16</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background:rgba(0,0,0,0);</string>
-    </property>
-    <property name="text">
-     <string>Execution Time:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="matchLabel">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
       <y>430</y>
       <width>191</width>
       <height>31</height>
@@ -501,13 +479,13 @@ color:white;
      <string notr="true">background:rgba(0,0,0,0);</string>
     </property>
     <property name="text">
-     <string>None</string>
+     <string>Execution Time:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="execTime">
+   <widget class="QLabel" name="matchLabel">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>20</x>
       <y>440</y>
       <width>191</width>
       <height>31</height>
@@ -516,7 +494,29 @@ color:white;
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>12</pointsize>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:rgba(0,0,0,0);</string>
+    </property>
+    <property name="text">
+     <string>None</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="execTime">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>430</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>16</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -530,7 +530,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>230</y>
+      <y>240</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -552,7 +552,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>170</y>
+      <y>160</y>
       <width>251</width>
       <height>251</height>
      </rect>
@@ -568,7 +568,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>170</y>
+      <y>160</y>
       <width>251</width>
       <height>251</height>
      </rect>
@@ -584,7 +584,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>200</y>
+      <y>210</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -606,7 +606,7 @@ color:white;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>320</y>
+      <y>330</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -622,6 +622,54 @@ color:white;
     </property>
     <property name="text">
      <string>No File Chosen</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="folderButton_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>181</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+border: 2px solid black;
+border-radius:10px;
+background: rgba(0,0,0,0);
+border-color: #2196F3;
+color: dodgerblue;
+}
+
+QPushButton:hover{
+background: #2196F3;
+color:white;
+}</string>
+    </property>
+    <property name="text">
+     <string>Choose Data</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
