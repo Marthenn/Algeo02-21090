@@ -7,7 +7,6 @@
 - PyQt5 - version 5.15.4
 - OpenCv2 - version 4.6.0
 - Haarcascades for facial recognition
-- 
 
 
 ## Features
