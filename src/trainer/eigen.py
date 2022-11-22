@@ -34,31 +34,6 @@ def givenRot(a):
             a[i][j] = 0
     return a  
 
-
-def QR_factorisation_Householder_double(A):
-    """Perform QR factorisation in double floating-point precision.
-    :param A: The matrix to factorise.
-    :type A: :py:class:`numpy.ndarray`
-    :returns: The matrix Q and the matrix R.
-    :rtype: tuple
-    """
-    A = np.array(A, 'float')
-
-    n, m = A.shape
-    V = np.zeros_like(A, 'float')
-    for k in range(n):
-        V[k:, k] = A[k:, k].copy()
-        V[k, k] += np.sign(V[k, k]) * np.linalg.norm(V[k:, k], 2)
-        V[k:, k] /= np.linalg.norm(V[k:, k], 2)
-        A[k:, k:] -= 2 * np.outer(V[k:, k], np.dot(V[k:, k], A[k:, k:]))
-    R = np.triu(A[:n, :n])
-
-    Q = np.eye(m, n)
-    for k in range((n - 1), -1, -1):
-        Q[k:, k:] -= np.dot((2 * (np.outer(V[k:, k], V[k:, k]))), Q[k:, k:])
-    return Q, R
-
-
 # a = np.random.rand(8,8)
 # # a = np.random.randint(99,size=(100,100))
 # a = np.random.randint(100,size=(100,100))
